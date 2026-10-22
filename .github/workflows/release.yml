@@ -3,10 +3,16 @@ name: Release
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
   contents: write
+
+# Serialize runs so a branch push and a tag push of the same version do not both publish.
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   version:
@@ -17,14 +23,32 @@ jobs:
       new: ${{ steps.v.outputs.new }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - id: v
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
-          tag="v$version"
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            tag="$GITHUB_REF_NAME"
+            if [ "$tag" != "v$version" ]; then
+              echo "::error::Tag $tag does not match Cargo.toml version $version"
+              exit 1
+            fi
+          else
+            tag="v$version"
+          fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+          # An existing tag on another commit would publish new binaries under old code.
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null \
+            && [ "$(git rev-parse "$tag^{commit}")" != "$GITHUB_SHA" ]; then
+            echo "::error::Tag $tag already exists on a different commit. Bump the version in Cargo.toml."
+            exit 1
+          fi
+
           # Release only when this version has not been published yet.
           if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "new=false" >> "$GITHUB_OUTPUT"

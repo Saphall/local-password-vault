@@ -18,8 +18,7 @@ fn main() -> eframe::Result {
         options,
         Box::new(|cc| {
             icons::install(&cc.egui_ctx);
-            app::apply_theme(&cc.egui_ctx);
-            Ok(Box::new(app::App::new(Vault::default_path())))
+            Ok(Box::new(app::App::new(Vault::default_path(), &cc.egui_ctx)))
         }),
     )
 }

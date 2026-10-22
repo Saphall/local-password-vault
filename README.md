@@ -40,7 +40,8 @@ passlock/
 - Password generator and strength indicator
 - Password history (last 5 passwords per entry)
 - Copy to clipboard, cleared automatically after 30 seconds
-- Dark theme with icons
+- Light and dark theme (toggle in the header, remembered between launches)
+- Site logos for well-known services, generated offline
 
 ## Download
 
@@ -70,8 +71,10 @@ cargo test
 ### Release
 
 Pushing to `main` publishes a release automatically when the `version` in `Cargo.toml` has no release yet.
-The workflow ([.github/workflows/release.yml](.github/workflows/release.yml)) creates the `v<version>` tag, tests, builds and attaches the binaries.
-To ship a new version, bump `version` in `Cargo.toml` and push to `main`.
+Pushing a `v<version>` tag that matches `Cargo.toml` does the same.
+The workflow ([.github/workflows/release.yml](.github/workflows/release.yml)) creates the `v<version>` tag if needed, tests, builds and attaches the binaries.
+To ship a new version, bump `version` in `Cargo.toml` (and commit `Cargo.lock`) and push to `main`.
+If the tag already exists on another commit, the run fails: bump the version instead of reusing it.
 
 ## Security
 
