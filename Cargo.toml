@@ -2,5 +2,19 @@
 name = "passlock"
 version = "0.1.0"
 edition = "2024"
+license = "GPL-3.0-only"
 
 [dependencies]
+argon2 = "0.6.0"
+chacha20poly1305 = "0.11.0"
+dirs = "7.0.0"
+eframe = "0.37.0"
+egui = "0.37.0"
+rand = "0.10.3"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+zeroize = "1.9.1"
+
+# Argon2 is too slow unoptimized; optimize dependencies even in dev builds.
+[profile.dev.package."*"]
+opt-level = 3
