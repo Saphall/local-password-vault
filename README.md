@@ -18,7 +18,7 @@ passlock/
 ├── assets/
 │   ├── logo.png
 │   └── fonts/        Phosphor icon fonts (MIT)
-├── .github/workflows/release.yml   build and publish binaries on version tags
+├── .github/workflows/release.yml   build and publish binaries when the version changes
 ├── src/
 │   ├── main.rs       window setup
 │   ├── lib.rs        exposes crypto, models, storage to tests
@@ -66,6 +66,12 @@ On later launches, enter the same password to unlock.
 ```bash
 cargo test
 ```
+
+### Release
+
+Pushing to `main` publishes a release automatically when the `version` in `Cargo.toml` has no release yet.
+The workflow ([.github/workflows/release.yml](.github/workflows/release.yml)) creates the `v<version>` tag, tests, builds and attaches the binaries.
+To ship a new version, bump `version` in `Cargo.toml` and push to `main`.
 
 ## Security
 
