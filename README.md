@@ -72,14 +72,14 @@ cargo test
 
 Pushing to `main` publishes a release automatically when the `version` in `Cargo.toml` has no release yet.
 Pushing a `v<version>` tag that matches `Cargo.toml` does the same.
-The workflow ([.github/workflows/release.yml](.github/workflows/release.yml)) creates the `v<version>` tag if needed, tests, builds and attaches the binaries.
+The workflow ([release.yml](.github/workflows/release.yml)) creates the `v<version>` tag if needed, tests, builds and attaches the binaries.
 To ship a new version, bump `version` in `Cargo.toml` (and commit `Cargo.lock`) and push to `main`.
 If the tag already exists on another commit, the run fails: bump the version instead of reusing it.
 
 ## Security
 
-1. Argon2id (64 MiB memory, 3 passes) derives a 256-bit key from the master password and a random 16-byte salt.
-2. XChaCha20-Poly1305 encrypts the vault. Every save uses a fresh random 24-byte nonce, and the authentication tag detects tampering.
+1. `Argon2id` (64 MiB memory, 3 passes) derives a 256-bit key from the master password and a random 16-byte salt.
+2. `XChaCha20-Poly1305` encrypts the vault. Every save uses a fresh random 24-byte nonce, and the authentication tag detects tampering.
 3. Only the version, salt, nonce and ciphertext are written to disk. The master password and key are never stored.
 4. The vault file is written atomically (temp file, then rename) with `0600` permissions on Unix.
 5. The key and the decrypted vault bytes are zeroized when dropped, and the master password field is wiped after unlock.
