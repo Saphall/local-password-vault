@@ -1,8 +1,9 @@
-<p align="center">
-  <img src="assets/logo.png" alt="PassLock - built with Rust" width="320">
+# passlock 🔒
+
+<p>
+<img src="assets/logo.png" alt="PassLock - built with Rust" width="200">
 </p>
 
-# passlock
 An encrypted local password manager with a master password written in rust.
 
 ## Run
@@ -12,4 +13,3 @@ An encrypted local password manager with a master password written in rust.
 ```bash
 cargo run
 ```
-    
