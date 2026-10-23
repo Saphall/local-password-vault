@@ -7,12 +7,13 @@ use eframe::egui;
 use passlock::storage::Vault;
 
 fn main() -> eframe::Result {
-    let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_inner_size([1100.0, 650.0])
-            .with_min_inner_size([760.0, 480.0]),
-        ..Default::default()
-    };
+    let mut viewport = egui::ViewportBuilder::default()
+        .with_inner_size([1100.0, 650.0])
+        .with_min_inner_size([760.0, 480.0]);
+    if let Ok(icon) = eframe::icon_data::from_png_bytes(include_bytes!("../assets/icon.png")) {
+        viewport = viewport.with_icon(icon);
+    }
+    let options = eframe::NativeOptions { viewport, ..Default::default() };
     eframe::run_native(
         "PassLock",
         options,

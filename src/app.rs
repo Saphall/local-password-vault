@@ -172,6 +172,15 @@ pub struct App {
     toast: Option<(String, Instant)>,
     dark: bool,
     theme_path: PathBuf,
+    logo: Option<egui::TextureHandle>,
+    emblem: Option<egui::TextureHandle>,
+}
+
+fn load_png(ctx: &egui::Context, name: &str, bytes: &[u8]) -> Option<egui::TextureHandle> {
+    let icon = eframe::icon_data::from_png_bytes(bytes).ok()?;
+    let size = [icon.width as usize, icon.height as usize];
+    let image = egui::ColorImage::from_rgba_unmultiplied(size, &icon.rgba);
+    Some(ctx.load_texture(name, image, egui::TextureOptions::LINEAR))
 }
 
 impl App {
@@ -180,6 +189,8 @@ impl App {
         let dark = fs::read_to_string(&theme_path).map(|s| s.trim() != "light").unwrap_or(true);
         apply_theme(ctx, dark);
         App {
+            logo: load_png(ctx, "logo", include_bytes!("../assets/logo_512.png")),
+            emblem: load_png(ctx, "emblem", include_bytes!("../assets/emblem.png")),
             dark,
             theme_path,
             path,
@@ -272,10 +283,14 @@ impl App {
             ui.with_layout(Layout::right_to_left(Align::Min), |ui| toggle = self.theme_button(ui));
             ui.add_space(ui.available_height() * 0.25);
             ui.vertical_centered(|ui| {
-                ui.label(RichText::new(icons::LOCK_KEY).size(56.0).color(ORANGE));
-                wordmark(ui, 34.0);
-                ui.label(RichText::new("Built with Rust").color(MUTED));
-                ui.add_space(20.0);
+                if let Some(logo) = &self.logo {
+                    logo_image(ui, logo, 240.0, 12.0);
+                } else {
+                    ui.label(RichText::new(icons::LOCK_KEY).size(56.0).color(ORANGE));
+                    wordmark(ui, 34.0);
+                    ui.label(RichText::new("Built with Rust").color(MUTED));
+                }
+                ui.add_space(12.0);
                 ui.label(if creating {
                     "Create a master password for your new vault"
                 } else {
@@ -388,7 +403,11 @@ impl App {
 
         egui::Panel::top("header").show(ui, |ui| {
             ui.horizontal(|ui| {
-                ui.label(RichText::new(icons::LOCK_KEY).size(22.0).color(ORANGE));
+                if let Some(emblem) = &self.emblem {
+                    logo_image(ui, emblem, 30.0, 6.0);
+                } else {
+                    ui.label(RichText::new(icons::LOCK_KEY).size(22.0).color(ORANGE));
+                }
                 wordmark(ui, 22.0);
                 ui.add_space(16.0);
                 ui.add(
@@ -997,6 +1016,15 @@ fn icon_button(ui: &mut egui::Ui, icon: &str, tip: &str, color: Color32) -> bool
         .on_hover_text(tip)
         .on_hover_cursor(egui::CursorIcon::PointingHand)
         .clicked()
+}
+
+/// Logo art is white-on-dark, so the light theme needs a dark backdrop.
+fn logo_image(ui: &mut egui::Ui, tex: &egui::TextureHandle, size: f32, radius: f32) {
+    let (rect, _) = ui.allocate_exact_size(Vec2::splat(size), Sense::hover());
+    if !is_dark(ui) {
+        ui.painter().rect_filled(rect, radius, Color32::from_rgb(17, 20, 26));
+    }
+    egui::Image::new(tex).fit_to_exact_size(rect.size()).paint_at(ui, rect);
 }
 
 fn wordmark(ui: &mut egui::Ui, size: f32) {
