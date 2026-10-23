@@ -43,12 +43,6 @@ passlock/
 - Light and dark theme (toggle in the header, remembered between launches)
 - Site logos for well-known services, generated offline
 
-## Download
-
-Pre-built binaries for Linux, Windows and macOS (Intel and Apple Silicon) are attached to each
-[GitHub release](../../releases). Download the archive for your system, extract it and run `passlock`.
-Verify the download against `SHA256SUMS.txt` from the same release.
-
 ## Run
 
 > Prerequisite: [Rust](https://doc.rust-lang.org/book/ch01-01-installation.html)
@@ -67,6 +61,19 @@ On later launches, enter the same password to unlock.
 ```bash
 cargo test
 ```
+
+## Download
+
+Pre-built binaries for Linux, Windows and macOS (Intel and Apple Silicon) are attached to each
+[GitHub release](../../releases). Download the archive for your system, extract it and run `passlock`.
+Verify the download against `SHA256SUMS.txt` from the same release.
+
+## Screenshots
+
+<p>
+<img src="assets/passlock_masterkey.png" alt="PassLock master key screen" width="48%">
+<img src="assets/passlock_vault.png" alt="PassLock vault" width="48%">
+</p>
 
 ### Release
 
